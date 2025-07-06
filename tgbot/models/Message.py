@@ -6,7 +6,7 @@ class Message:
 		self.message_id = msg['message_id']
 		self.chat_id = msg['chat']['id']
 		self.text = msg.get('text', '')
-		self.session = session or aiohttp.ClientSession()
+		self.session = session
 
 	async def send_message(self, text, chat_id, parse_mode=None, reply_to=None):
 		payload = {
@@ -24,7 +24,6 @@ class Message:
 			"content-type": "application/json"
 		}
 
-		# TODO: "Unclosed sessoin" xatolgini to'g'irlash
 		async with self.session.post(self.url + "sendMessage", json=payload, headers=headers) as resp:
 			response = await resp.json()
 		if response['ok']:

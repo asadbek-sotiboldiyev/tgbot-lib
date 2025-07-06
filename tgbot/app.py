@@ -51,12 +51,13 @@ class App:
 					for update in updates:
 						if logging:
 							print("NEW UPDATE:", updater.short_result(update))
-						message = Message(self.TOKEN, update['message'])
-						if msg_fn := self.handles.get(message.text, False):
-							await msg_fn(message)
-						else:
-							# Handlelarga to'g'ri kelmagan xabar e'tiborsiz qoladi
-							pass
+						async with aiohttp.ClientSession() as msg_session:
+							message = Message(self.TOKEN, update['message'], session=msg_session)
+							if msg_fn := self.handles.get(message.text, False):
+								await msg_fn(message)
+							else:
+								# Handlelarga to'g'ri kelmagan xabar e'tiborsiz qoladi
+								pass
 						last_update_id = update['update_id'] + 1
 			else:
 				print("ERROR: TOKEN noto'g'ri. Qayta tekshiring.")
